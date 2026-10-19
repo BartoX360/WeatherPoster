@@ -1,0 +1,51 @@
+---
+name: WeatherPoster
+strategy: polling
+polling_verb: get
+polling_url: https://api.open-meteo.com/v1/forecast?latitude={{ lat }}&longitude={{ lon }}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset&timezone=auto&forecast_days=4
+polling_headers: ''
+refresh_interval: 15
+no_screen_padding: 'yes'
+dark_mode: 'no'
+static_data: ''
+custom_fields:
+- keyname: about
+  field_type: author_bio
+  name: WeatherPoster
+  description: "The weather at home, drawn as a poster: the real sky (sun, dusk or night, clouds, rain, snow, fog, storms), today's numbers and the next three days. Data: Open-Meteo (CC BY 4.0). / La météo chez vous, façon affiche."
+- keyname: lat
+  field_type: string
+  name: Latitude
+  description: Latitude of your home (e.g. 48.8566)
+  help_text: Right-click a spot on Google Maps to copy its coordinates.
+- keyname: lon
+  field_type: string
+  name: Longitude
+  description: Longitude of your home (e.g. 2.3522)
+- keyname: city
+  field_type: string
+  name: Display name / Nom affiché
+  description: Shown in "Weather in …" / "La météo de …". Leave empty for "Weather at home".
+  optional: true
+- keyname: language
+  field_type: select
+  name: Language / Langue
+  options:
+  - English: en
+  - Français: fr
+  default: en
+- keyname: units
+  field_type: select
+  name: Units / Unités
+  options:
+  - Metric (°C, km/h): metric
+  - Imperial (°F, mph): imperial
+  default: metric
+- keyname: style
+  field_type: select
+  name: Style
+  description: E-ink for black & white screens (TRMNL), Color for LCD screens.
+  options:
+  - E-ink: eink
+  - Color / Couleur: color
+  default: eink

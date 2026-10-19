@@ -1,0 +1,383 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=IBM+Plex+Mono:wght@400;500;600&display=block" rel="stylesheet">
+<style>
+  .view:has(> .wp) { position: relative; padding: 0; overflow: hidden; }
+  .wp { position: absolute; inset: 0; overflow: hidden; container-type: size;
+        --bg: #f2eee6; --ink: #111111; --muted: #444455; --sky: #ccddee; --top: #444455;
+        --sun: #ffcc44; --sun-stroke: none; --cloud: #ffffff; --cloud-stroke: none; --star: #eeeedd; --accent: #dd2233;
+        --hero: #ffffff; --hero-back: #e6e9ee; --hero-stroke: #000000; --drop: #5577aa; --flake: #000000; --mist: #444455;
+        --sky-h: 67.5%; --pad: 4.4cqw; --f-top: max(11px, 1.35cqw); --f-meta: max(12px, 1.45cqw);
+        --f-title: 6.6cqw; --f-sub: max(12px, 1.5cqw); --compass: min(9cqw, 15cqh);
+        background: var(--bg); color: var(--ink); font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+  .wp { --rain: #5577aa; --snow: #ffffff; --snow-stroke: none; --fog: #ffffff; --glow: #ffcc88; --bolt: #ffcc44; }
+  .wp--grey { --sky: #aabbcc; --cloud: #e6e9ee; --hero-back: #c9ccd2; }
+  .wp--wx-storm { --sky: #8899aa; --cloud: #667788; --hero: #c9ccd2; --hero-back: #8a8f99; }
+  .wp--dusk { --sky: #ee9977; --sun: #ee5533; --top: #442233; }
+  .wp--dusk.wp--grey { --sky: #887799; --cloud: #aa99aa; --glow: #aa8899; --top: #eeeedd; --rain: #eeeedd; }
+  .wp--night { --sky: #223344; --top: #ccddee; --sun: #eeeedd; --cloud: #445566; --rain: #8899bb;
+               --hero: #8899aa; --hero-back: #667788; --drop: #8899bb; --mist: #8899aa; --flake: #eeeedd; }
+  .wp--night.wp--grey { --sky: #2a3038; --cloud: #3d4550; }
+
+  .wp.wp--eink { --bg: #ffffff; --ink: #000000; --muted: #000000; --sky: #ffffff; --top: #000000; --sun: url(#wp-hatch);
+              --sun-stroke: #000000; --cloud: #ffffff; --cloud-stroke: #000000; --accent: #000000;
+              --hero: #ffffff; --hero-back: url(#wp-dots); --hero-stroke: #000000; --drop: #000000; --flake: #000000; --mist: #000000;
+              --rain: #000000; --snow: #ffffff; --snow-stroke: #000000; --fog: #000000; --bolt: #000000; --glow: url(#wp-lines); }
+  .wp.wp--eink.wp--grey, .wp.wp--eink.wp--dusk { --sky: #ffffff; --top: #000000; --cloud: #ffffff; --sun: url(#wp-hatch); --rain: #000000; }
+  .wp.wp--eink.wp--wx-storm { --sky: #ffffff; --cloud: #000000; --hero: #ffffff; }
+  .wp.wp--eink.wp--night { --sky: #000000; --top: #ffffff; --sun: #ffffff; --sun-stroke: none; --cloud: #000000;
+                        --cloud-stroke: #ffffff; --star: #ffffff; --rain: #ffffff; --snow: #ffffff; --snow-stroke: #ffffff;
+                        --fog: #ffffff; --bolt: #ffffff; --hero: #ffffff; --hero-back: #ffffff; --drop: #ffffff; --mist: #ffffff; --flake: #ffffff; }
+
+  /* calques du ciel selon la lumière et la météo */
+  .wp .wx { display: none; }
+  .wp--dusk .wp-glow, .wp--night .wp-stars, .wp--eink.wp--wx-overcast:not(.wp--night) .wp-dots,
+  .wp--wx-cloudy .wp-clouds-more, .wp--grey .wp-clouds-more,
+  .wp--wx-rain .wp-rain, .wp--wx-storm .wp-rain, .wp--wx-snow .wp-snow, .wp--wx-fog .wp-fog { display: inline; }
+  .wp--grey .wp-stars { display: none; }
+  .wp .wx.on { display: inline; }
+  .wp--wx-storm .wp-d-mid { display: none; }
+
+  .wp-sky { position: absolute; left: 0; right: 0; top: 0; height: var(--sky-h); background: var(--sky); overflow: hidden; }
+  .wp-sky > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .wp-art { position: absolute; left: 8%; right: 8%; top: 13%; bottom: 4%; }
+  .wp-art svg { width: 100%; height: 100%; }
+  .wp-top { position: absolute; top: calc(var(--pad) * .6); left: var(--pad); right: var(--pad); display: flex;
+            justify-content: space-between; gap: 2em; font-size: var(--f-top); letter-spacing: .28em;
+            text-transform: uppercase; color: var(--top); white-space: nowrap; }
+  .wp-top > span:first-child { overflow: hidden; text-overflow: ellipsis; }
+  .wp-upd-short { display: none; }
+  .wp--half_horizontal .wp-upd-long, .wp--half_vertical .wp-upd-long, .wp--quadrant .wp-upd-long { display: none; }
+  .wp--half_horizontal .wp-upd-short, .wp--half_vertical .wp-upd-short, .wp--quadrant .wp-upd-short { display: inline; }
+
+  .wp-info { position: absolute; left: var(--pad); right: var(--pad); top: var(--sky-h); bottom: 0;
+             border-top: max(2px, .25cqw) solid var(--ink); display: flex; align-items: center; gap: 3cqw; }
+  .wp-text { flex: 1 1 auto; min-width: 0; }
+  .wp-meta { font-size: var(--f-meta); letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wp-title { font-family: 'Archivo', 'Arial Black', sans-serif; font-weight: 900; font-size: var(--f-title);
+              line-height: 1.05; text-transform: uppercase; margin: .18em 0 .14em; white-space: nowrap; overflow: hidden; }
+  .wp-title .deg { font-weight: 800; margin-left: .35em; }
+  .wp-sub { font-size: var(--f-sub); color: var(--muted); letter-spacing: .03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wp-sub b { color: var(--ink); font-weight: 500; }
+  .wp-days { margin-top: .45em; }
+  .wp-compass { flex: 0 0 auto; text-align: center; font-size: var(--f-top); letter-spacing: .2em; color: var(--muted);
+                text-transform: uppercase; white-space: nowrap; }
+  .wp-compass svg { display: block; width: var(--compass); height: var(--compass); margin: .4em auto; }
+  .wp-err .wp-meta { color: var(--accent); }
+  .wp--error .wp-compass, .wp--error .wp-days { display: none; }
+  /* e-ink 1 bit : pas d'anticrénelage, il faut des traits plus épais */
+  .wp--eink { font-weight: 600; --f-top: max(13px, 1.35cqw); --f-meta: max(13px, 1.45cqw); --f-sub: max(13px, 1.5cqw); }
+  .wp--eink .wp-sub b { font-weight: 600; }
+  .wp--eink .wp-top, .wp--eink .wp-meta { letter-spacing: .14em; }
+
+  .wp--half_horizontal { --pad: 3cqw; --f-title: 5cqw; --compass: 30cqh; }
+  .wp--half_horizontal .wp-sky { right: auto; width: 34%; height: 100%; border-right: max(2px, .25cqw) solid var(--ink); }
+  .wp--half_horizontal .wp-art { left: 4%; right: 4%; top: 20%; bottom: 6%; }
+  .wp--half_horizontal .wp-info { left: calc(34% + var(--pad)); top: 0; border-top: 0; }
+  .wp--half_horizontal .wp-top > span:first-child, .wp--half_vertical .wp-top > span:first-child { display: none; }
+  .wp--half_horizontal .wp-top, .wp--half_vertical .wp-top { justify-content: flex-end; }
+  .wp--half_horizontal .wp-sub { line-height: 1.5; }
+  .wp--half_vertical { --sky-h: 42%; --pad: 5cqw; --f-top: max(11px, 2.6cqw); --f-meta: max(11px, 2.9cqw);
+                       --f-title: 11cqw; --f-sub: max(12px, 3.2cqw); }
+  .wp--half_vertical .wp-art { left: 4%; right: 4%; top: 18%; }
+  .wp--half_vertical .wp-meta { white-space: normal; line-height: 1.5; }
+  .wp--half_vertical .wp-info { align-items: flex-start; padding-top: 6cqw; }
+  .wp--half_vertical .wp-sub { white-space: normal; line-height: 1.5; }
+  .wp--half_vertical .wp-title .deg { display: block; margin: 0; }
+  .wp--half_vertical .wp-top, .wp--quadrant .wp-top { letter-spacing: .1em; }
+  .wp--half_vertical .wp-compass, .wp--quadrant .wp-compass, .wp--quadrant .wp-days,
+  .wp--half_horizontal .wp-days { display: none !important; }
+  .wp--quadrant { --sky-h: 44%; --pad: 4.5cqw; --f-top: max(11px, 2.8cqw); --f-meta: max(11px, 2.8cqw);
+                  --f-title: 9cqw; --f-sub: max(11px, 2.8cqw); }
+  .wp--quadrant .wp-art { left: 4%; right: 4%; top: 22%; bottom: 4%; }
+  .wp--quadrant .wp-top > span:first-child { display: none; }
+  .wp--quadrant .wp-top { justify-content: flex-end; }
+</style>
+
+{% template weatherposter %}
+<div class="wp wp--{{ size }}{% if cf.style == 'color' %} wp--color{% else %} wp--eink{% endif %}"
+     data-lat="{{ cf.lat }}" data-lon="{{ cf.lon }}" data-lang="{{ cf.language | default: 'en' }}"
+     data-units="{{ cf.units | default: 'metric' }}" data-ts="{{ ts }}" data-off="{{ off | default: 0 }}">
+  <script type="application/json" class="wp-cur">{{ current | json }}</script>
+  <script type="application/json" class="wp-daily">{{ daily | json }}</script>
+  <div class="wp-sky">
+    <svg viewBox="0 0 1280 540" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="wp-hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width="9" height="9" fill="#fff"/><rect width="3" height="9" fill="#000"/>
+        </pattern>
+        <pattern id="wp-lines" width="12" height="15" patternUnits="userSpaceOnUse">
+          <rect width="12" height="15" fill="#fff"/><rect width="12" height="2" fill="#000"/>
+        </pattern>
+        <pattern id="wp-dots" width="16" height="16" patternUnits="userSpaceOnUse">
+          <rect width="16" height="16" fill="#fff"/>
+          <circle cx="4" cy="4" r="1.6" fill="#000"/><circle cx="12" cy="12" r="1.6" fill="#000"/>
+        </pattern>
+        <pattern id="wp-fog-p" width="300" height="70" patternUnits="userSpaceOnUse">
+          <path d="M10 14 H150 M170 50 H280" style="stroke:var(--fog)" stroke-width="4" stroke-linecap="round" stroke-dasharray="40 14"/>
+        </pattern>
+        <path id="wp-cloud" d="M30 64 a24 24 0 0 1 4-47 a34 34 0 0 1 62-6 a26 26 0 0 1 38 26 a16 16 0 0 1 2 27 Z"/>
+        <path id="wp-drop" d="M0 -16 C5 -6 10 0 10 6 A10 10 0 0 1 -10 6 C-10 0 -5 -6 0 -16 Z"/>
+        <g id="wp-flake"><path d="M0 -12 V12 M-10.4 -6 L10.4 6 M-10.4 6 L10.4 -6"/></g>
+      </defs>
+      <rect class="wx wp-dots" x="0" y="0" width="1280" height="540" fill="url(#wp-dots)" opacity=".9"/>
+      <rect class="wx wp-glow" x="0" y="330" width="1280" height="210" style="fill:var(--glow)"/>
+      <g class="wx wp-stars" style="fill:var(--star)">
+        <circle cx="140" cy="130" r="2"/><circle cx="310" cy="210" r="1.6"/><circle cx="420" cy="110" r="2.2"/>
+        <circle cx="980" cy="150" r="1.8"/><circle cx="1130" cy="250" r="2"/><circle cx="860" cy="90" r="1.5"/>
+        <circle cx="230" cy="350" r="1.5"/><circle cx="1060" cy="390" r="1.7"/><circle cx="560" cy="80" r="1.4"/>
+      </g>
+      <g class="wx wp-rain" style="stroke:var(--rain)" stroke-linecap="round"></g>
+      <g class="wx wp-snow" style="fill:var(--snow);stroke:var(--snow-stroke)" stroke-width="2"></g>
+      <g style="fill:var(--cloud);stroke:var(--cloud-stroke);stroke-width:3">
+        <g class="wx wp-clouds-more">
+          <use href="#wp-cloud" transform="translate(-30 105) scale(1.5)"/>
+          <use href="#wp-cloud" transform="translate(1040 85) scale(1.5)"/>
+        </g>
+        <use href="#wp-cloud" transform="translate(150 250) scale(1.2)"/>
+        <use href="#wp-cloud" transform="translate(1010 400) scale(1.1)"/>
+        <use href="#wp-cloud" transform="translate(80 420) scale(.7)"/>
+      </g>
+      <rect class="wx wp-fog" x="0" y="190" width="1280" height="350" fill="url(#wp-fog-p)"/>
+    </svg>
+    <!-- illustration principale, cernée de noir comme l'avion de FlightPoster -->
+    <div class="wp-art">
+      <svg viewBox="0 -20 660 270" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <g class="wx wp-h-sun-full"><circle cx="330" cy="112" r="104" style="fill:var(--sun);stroke:var(--sun-stroke)" stroke-width="3"/></g>
+        <g class="wx wp-h-moon-full">
+          <circle cx="330" cy="112" r="96" style="fill:var(--sun)"/>
+          <circle cx="372" cy="84" r="86" style="fill:var(--sky)"/>
+        </g>
+        <g class="wx wp-h-sun-part"><circle cx="404" cy="58" r="74" style="fill:var(--sun);stroke:var(--sun-stroke)" stroke-width="3"/></g>
+        <g class="wx wp-h-moon-part">
+          <circle cx="404" cy="58" r="68" style="fill:var(--sun)"/>
+          <circle cx="434" cy="38" r="60" style="fill:var(--sky)"/>
+        </g>
+        <g style="stroke:var(--hero-stroke)" stroke-width="3" stroke-linejoin="round">
+          <use class="wx wp-h-cloud-back" href="#wp-cloud" transform="translate(316 6) scale(1.5)" style="fill:var(--hero-back)" stroke-width="2"/>
+          <use class="wx wp-h-cloud-small" href="#wp-cloud" transform="translate(408 150) scale(1.05)" style="fill:var(--hero)" stroke-width="2.9"/>
+          <use class="wx wp-h-cloud" href="#wp-cloud" transform="translate(150 38) scale(2.05)" style="fill:var(--hero)" stroke-width="1.5"/>
+          <g class="wx wp-h-rain" style="fill:var(--drop)">
+            <use href="#wp-drop" transform="translate(222 196) rotate(12)"/><use href="#wp-drop" transform="translate(268 228) rotate(12)"/>
+            <use class="wp-d-mid" href="#wp-drop" transform="translate(310 192) rotate(12)"/><use class="wp-d-mid" href="#wp-drop" transform="translate(352 226) rotate(12)"/>
+            <use href="#wp-drop" transform="translate(396 194) rotate(12)"/><use href="#wp-drop" transform="translate(438 228) rotate(12)"/>
+          </g>
+          <g class="wx wp-h-snow" style="stroke:var(--flake)" stroke-width="5" stroke-linecap="round">
+            <use href="#wp-flake" transform="translate(222 198)"/><use href="#wp-flake" transform="translate(268 230)"/>
+            <use href="#wp-flake" transform="translate(312 196)"/><use href="#wp-flake" transform="translate(356 230)"/>
+            <use href="#wp-flake" transform="translate(400 198)"/><use href="#wp-flake" transform="translate(442 230)"/>
+          </g>
+          <path class="wx wp-h-bolt" d="M318 150 L282 222 L312 222 L292 250 L368 196 L336 196 L360 150 Z" style="fill:var(--bolt)"/>
+        </g>
+        <g class="wx wp-h-fog" style="stroke:var(--mist)" stroke-width="11" stroke-linecap="round">
+          <path d="M176 170 H380 M410 170 H486 M140 200 H250 M280 200 H520 M196 230 H440"/>
+        </g>
+      </svg>
+    </div>
+    <div class="wp-top">
+      <span><span class="wp-k"></span><span class="wp-city">{{ cf.city }}</span></span>
+      <span class="wp-upd"><span class="wp-upd-long"></span><span class="wp-upd-short"></span><span class="wp-time">--:--</span></span>
+    </div>
+  </div>
+  <div class="wp-info">
+    <div class="wp-text">
+      <div class="wp-meta"></div>
+      <div class="wp-title"></div>
+      <div class="wp-sub wp-today"></div>
+      <div class="wp-sub wp-days"></div>
+    </div>
+    <div class="wp-compass">
+      N
+      <svg viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="54" fill="none" style="stroke:var(--ink)" stroke-width="3"/>
+        <g class="wp-needle"><path d="M60 18 L72 66 L60 58 L48 66 Z" style="fill:var(--accent)"/>
+          <circle cx="60" cy="60" r="5" style="fill:var(--ink)"/></g>
+      </svg>
+      <span class="wp-wind"></span>
+    </div>
+  </div>
+</div>
+{% endtemplate %}
+
+<script>
+(function () {
+  // [scène, libellé fr, libellé en] par code météo WMO
+  var CODES = {
+    0: ['clear', 'Ciel dégagé', 'Clear sky'], 1: ['clear', 'Peu nuageux', 'Mostly clear'],
+    2: ['cloudy', 'Éclaircies', 'Partly cloudy'], 3: ['overcast', 'Couvert', 'Overcast'],
+    45: ['fog', 'Brouillard', 'Fog'], 48: ['fog', 'Brouillard givrant', 'Freezing fog'],
+    51: ['rain', 'Bruine', 'Drizzle'], 53: ['rain', 'Bruine', 'Drizzle'], 55: ['rain', 'Bruine', 'Drizzle'],
+    56: ['rain', 'Bruine verglaçante', 'Freezing drizzle'], 57: ['rain', 'Bruine verglaçante', 'Freezing drizzle'],
+    61: ['rain', 'Pluie faible', 'Light rain'], 63: ['rain', 'Pluie', 'Rain'], 65: ['rain', 'Forte pluie', 'Heavy rain'],
+    66: ['rain', 'Pluie verglaçante', 'Freezing rain'], 67: ['rain', 'Pluie verglaçante', 'Freezing rain'],
+    71: ['snow', 'Neige faible', 'Light snow'], 73: ['snow', 'Neige', 'Snow'], 75: ['snow', 'Forte neige', 'Heavy snow'],
+    77: ['snow', 'Grésil', 'Snow grains'], 80: ['showers', 'Averses', 'Showers'], 81: ['showers', 'Averses', 'Showers'],
+    82: ['rain', 'Fortes averses', 'Heavy showers'], 85: ['snow', 'Averses de neige', 'Snow showers'],
+    86: ['snow', 'Averses de neige', 'Snow showers'], 95: ['storm', 'Orage', 'Thunderstorm'],
+    96: ['storm', 'Orage de grêle', 'Hailstorm'], 99: ['storm', 'Orage de grêle', 'Hailstorm']
+  };
+  var I18N = {
+    fr: {
+      sky: 'La météo de ', skyHome: 'La météo chez moi', updated: 'Dernière actualisation à ', upd: 'Màj ',
+      days: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+      short: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+      months: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+      date: function (d, m, n) { return d + ' ' + n + ' ' + m; }, sun: 'Soleil ',
+      feels: 'ressenti ', humidity: 'humidité ', rain: 'pluie ', wind: 'Vent ', calm: 'Vent calme',
+      offlineMeta: 'Météo indisponible', offline: 'Hors ligne', noCoords: 'Renseignez la latitude et la longitude dans les réglages.',
+      noFeed: 'Impossible de joindre Open-Meteo pour le moment.', pct: ' %', decimal: ','
+    },
+    en: {
+      sky: 'Weather in ', skyHome: 'Weather at home', updated: 'Last updated at ', upd: 'Upd. ',
+      days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      short: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      date: function (d, m, n) { return d + ', ' + m + ' ' + n; }, sun: 'Sun ',
+      feels: 'feels like ', humidity: 'humidity ', rain: 'rain ', wind: 'Wind ', calm: 'Calm',
+      offlineMeta: 'Weather unavailable', offline: 'Offline', noCoords: 'Set your latitude and longitude in the plugin settings.',
+      noFeed: 'Unable to reach Open-Meteo right now.', pct: '%', decimal: '.'
+    }
+  };
+
+  function rad(d) { return d * Math.PI / 180; }
+  function sunElevation(lat, lon, date) {
+    var start = Date.UTC(date.getUTCFullYear(), 0, 1);
+    var doy = Math.floor((date - start) / 864e5) + 1, hour = date.getUTCHours() + date.getUTCMinutes() / 60;
+    var g = 2 * Math.PI / 365 * (doy - 1 + (hour - 12) / 24);
+    var decl = 0.006918 - 0.399912 * Math.cos(g) + 0.070257 * Math.sin(g) - 0.006758 * Math.cos(2 * g)
+      + 0.000907 * Math.sin(2 * g) - 0.002697 * Math.cos(3 * g) + 0.00148 * Math.sin(3 * g);
+    var eqt = 229.18 * (0.000075 + 0.001868 * Math.cos(g) - 0.032077 * Math.sin(g)
+      - 0.014615 * Math.cos(2 * g) - 0.040849 * Math.sin(2 * g));
+    var ha = rad((hour * 60 + eqt + 4 * lon) / 4 - 180), la = rad(lat);
+    var cz = Math.sin(la) * Math.sin(decl) + Math.cos(la) * Math.cos(decl) * Math.cos(ha);
+    return 90 - Math.acos(Math.max(-1, Math.min(1, cz))) * 180 / Math.PI;
+  }
+  function fit(el) {
+    el.style.fontSize = '';
+    var size = parseFloat(getComputedStyle(el).fontSize), min = size * 0.4;
+    while (el.scrollWidth > el.clientWidth + 1 && size > min) { size *= 0.94; el.style.fontSize = size + 'px'; }
+  }
+  function json(el) { try { return JSON.parse(el.textContent); } catch (e) { return null; } }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function render(root) {
+    root.setAttribute('data-done', '1');
+    var q = function (s) { return root.querySelector(s); };
+    var on = function (s) { q(s).classList.add('on'); };
+    var lang = root.dataset.lang === 'fr' ? 'fr' : 'en', t = I18N[lang], imperial = root.dataset.units === 'imperial';
+    var lat = parseFloat(root.dataset.lat), lon = parseFloat(root.dataset.lon);
+    var ts = parseInt(root.dataset.ts, 10) || Math.floor(Date.now() / 1000), off = parseInt(root.dataset.off, 10) || 0;
+    var deg = function (c) { return Math.round(imperial ? c * 9 / 5 + 32 : c) + '°'; };
+    var info = function (code) { return CODES[code] || CODES[Math.floor(code / 10) * 10 + 1] || CODES[0]; };
+
+    q('.wp-k').textContent = q('.wp-city').textContent.trim() ? t.sky : t.skyHome;
+    q('.wp-upd-long').textContent = t.updated;
+    q('.wp-upd-short').textContent = t.upd;
+    q('.wp-time').textContent = new Date((ts + off) * 1000).toISOString().substr(11, 5);
+    var elev = isNaN(lat) ? 30 : sunElevation(lat, lon, new Date(ts * 1000));
+    var light = elev > 6 ? 'day' : elev > -6 ? 'dusk' : 'night';
+    root.classList.add('wp--' + light);
+
+    var cur = json(q('.wp-cur')), daily = json(q('.wp-daily'));
+    if (isNaN(lat) || isNaN(lon) || !cur || cur.weather_code == null) {
+      root.classList.add('wp--error', 'wp--wx-clear');
+      on(light === 'night' ? '.wp-h-moon-full' : '.wp-h-sun-full');
+      q('.wp-meta').textContent = t.offlineMeta;
+      q('.wp-title').textContent = t.offline;
+      q('.wp-today').textContent = isNaN(lat) ? t.noCoords : t.noFeed;
+      q('.wp-info').classList.add('wp-err');
+      return fit(q('.wp-title'));
+    }
+
+    // Scène : un astre, un gros nuage cerné, puis pluie, neige, éclair ou brume
+    var wx = info(cur.weather_code), scene = wx[0];
+    var sky = scene === 'showers' ? 'rain' : scene;
+    root.classList.add('wp--wx-' + sky);
+    if (sky !== 'clear' && sky !== 'cloudy' && scene !== 'showers') root.classList.add('wp--grey');
+    var star = light === 'night' ? 'moon' : 'sun';
+    if (scene === 'clear') { on('.wp-h-' + star + '-full'); if (cur.weather_code === 1) on('.wp-h-cloud-small'); }
+    else {
+      on('.wp-h-cloud');
+      if (scene === 'cloudy' || scene === 'showers') on('.wp-h-' + star + '-part'); else on('.wp-h-cloud-back');
+      if (sky === 'rain' || sky === 'storm') on('.wp-h-rain');
+      if (sky === 'snow') on('.wp-h-snow');
+      if (sky === 'storm') on('.wp-h-bolt');
+      if (sky === 'fog') on('.wp-h-fog');
+    }
+    if (sky === 'rain' || sky === 'storm') precipitation(root, 'rain', sky === 'storm' || cur.weather_code === 65 ? 1.4 : 1);
+    if (sky === 'snow') precipitation(root, 'snow', 1);
+
+    var label = wx[lang === 'fr' ? 1 : 2];
+    q('.wp-title').innerHTML = label + '<span class="deg">' + deg(cur.temperature_2m) + '</span>';
+
+    var day = function (i) { var p = daily.time[i].split('-'); return new Date(Date.UTC(+p[0], p[1] - 1, +p[2])); };
+    var hasDaily = daily && daily.time && daily.time.length;
+    var meta = [];
+    if (hasDaily) {
+      var d0 = day(0);
+      meta.push(t.date(t.days[d0.getUTCDay()], t.months[d0.getUTCMonth()], d0.getUTCDate()));
+      if (daily.sunrise && daily.sunset) meta.push(t.sun + daily.sunrise[0].substr(11, 5) + ' – ' + daily.sunset[0].substr(11, 5));
+    }
+    q('.wp-meta').textContent = meta.join(' · ');
+
+    var today = [];
+    if (hasDaily) today.push('<b>' + deg(daily.temperature_2m_min[0]) + ' / ' + deg(daily.temperature_2m_max[0]) + '</b>');
+    if (cur.apparent_temperature != null) today.push(t.feels + '<b>' + deg(cur.apparent_temperature) + '</b>');
+    if (cur.relative_humidity_2m != null) today.push(t.humidity + '<b>' + cur.relative_humidity_2m + t.pct + '</b>');
+    if (hasDaily && daily.precipitation_probability_max && daily.precipitation_probability_max[0] != null)
+      today.push(t.rain + '<b>' + daily.precipitation_probability_max[0] + t.pct + '</b>');
+    q('.wp-today').innerHTML = today.join(' · ');
+
+    if (hasDaily) {
+      var next = [];
+      for (var i = 1; i < Math.min(4, daily.time.length); i++) {
+        next.push('<b>' + t.short[day(i).getUTCDay()] + '</b> ' + info(daily.weather_code[i])[lang === 'fr' ? 1 : 2].toLowerCase()
+          + ' ' + deg(daily.temperature_2m_min[i]) + '/' + deg(daily.temperature_2m_max[i]));
+      }
+      q('.wp-days').innerHTML = next.join(' · ');
+    }
+
+    // Boussole : l'aiguille indique où va le vent (Open-Meteo donne d'où il vient)
+    var speed = cur.wind_speed_10m || 0, dir = cur.wind_direction_10m || 0;
+    q('.wp-needle').setAttribute('transform', 'rotate(' + Math.round(dir + 180) + ' 60 60)');
+    q('.wp-wind').textContent = speed < 2 ? t.calm :
+      t.wind + Math.round(imperial ? speed / 1.609 : speed) + (imperial ? ' mph' : ' km/h');
+    fit(q('.wp-title'));
+  }
+
+  // Gouttes / flocons dessinés sous chaque nuage du fond, avec un hasard reproductible
+  function precipitation(root, kind, density) {
+    var NS = 'http://www.w3.org/2000/svg', g = root.querySelector('.wp-' + kind), seed = 7;
+    var rnd = function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    var eink = root.classList.contains('wp--eink');
+    root.querySelectorAll('.wp-sky > svg use').forEach(function (u) {
+      var m = /translate\(([-\d.]+) ([-\d.]+)\) scale\(([\d.]+)\)/.exec(u.getAttribute('transform'));
+      if (!m || getComputedStyle(u.parentNode).display === 'none') return;
+      var x0 = +m[1], y0 = +m[2], k = +m[3], bottom = y0 + 60 * k;
+      var n = Math.round((kind === 'rain' ? 11 : 7) * k * density);
+      for (var i = 0; i < n; i++) {
+        var x = x0 + (16 + rnd() * 108) * k, y = bottom + 8 + rnd() * (90 + 110 * k);
+        if (y > 530) continue;
+        var el;
+        if (kind === 'rain') {
+          var len = 12 + rnd() * 20;
+          el = document.createElementNS(NS, 'line');
+          el.setAttribute('x1', x); el.setAttribute('y1', y);
+          el.setAttribute('x2', x - len * 0.18); el.setAttribute('y2', y + len);
+          el.setAttribute('stroke-width', eink ? 3.5 : 2.5 + rnd());
+        } else {
+          el = document.createElementNS(NS, 'circle');
+          el.setAttribute('cx', x); el.setAttribute('cy', y); el.setAttribute('r', 3 + rnd() * 3.5);
+        }
+        g.appendChild(el);
+      }
+    });
+  }
+
+  function boot() { document.querySelectorAll('.wp:not([data-done])').forEach(render); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () {
+    document.querySelectorAll('.wp-title').forEach(fit);
+  });
+})();
+</script>
