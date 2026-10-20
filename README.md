@@ -10,7 +10,7 @@
 
 *The weather at home, drawn as a poster.*
 
-A TRMNL plugin that shows today's weather as a poster: a big illustration of the real sky (sun, dusk or night, clouds, rain, snow, fog, thunderstorms), the temperature in large type, today's numbers, the next three days and a wind compass. It is the companion of [FlightPoster](http://192.168.1.109:3000/Anthony/FlightPoster) and shares its look.
+A TRMNL plugin that shows today's weather as a poster: a big illustration of the real sky (sun, dusk or night, clouds, rain, snow, fog, thunderstorms), the temperature in large type, today's numbers, the next three days and a wind compass. It is the companion of FlightPoster and shares its look.
 
 No server to install: the data comes from [Open-Meteo](https://open-meteo.com) (free, no API key, CC BY 4.0).
 
@@ -76,7 +76,7 @@ The `recipe/src/` folder follows the [trmnlp](https://github.com/usetrmnl/trmnlp
 
 *La météo chez vous, façon affiche.*
 
-Un plugin TRMNL qui affiche la météo du jour comme une affiche : une grande illustration du vrai ciel (soleil, crépuscule ou nuit, nuages, pluie, neige, brouillard, orage), la température en gros, les chiffres du jour, les trois jours suivants et une boussole pour le vent. C'est le compagnon de [FlightPoster](http://192.168.1.109:3000/Anthony/FlightPoster), dont il reprend le style.
+Un plugin TRMNL qui affiche la météo du jour comme une affiche : une grande illustration du vrai ciel (soleil, crépuscule ou nuit, nuages, pluie, neige, brouillard, orage), la température en gros, les chiffres du jour, les trois jours suivants et une boussole pour le vent. C'est le compagnon de FlightPoster, dont il reprend le style.
 
 Aucun serveur à installer : les données viennent d'[Open-Meteo](https://open-meteo.com) (gratuit, sans clé d'API, CC BY 4.0).
 
