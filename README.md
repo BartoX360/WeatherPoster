@@ -10,7 +10,7 @@
 
 *The weather at home, drawn as a poster.*
 
-A TRMNL plugin that shows today's weather as a poster: a big illustration of the real sky (sun, dusk or night, clouds, rain, snow, fog, thunderstorms), the temperature in large type, today's numbers, the next three days and a wind compass. It is the companion of FlightPoster and shares its look.
+A TRMNL plugin that shows today's weather as a poster: a big illustration of the real sky (sun, dusk or night, clouds, rain, snow, fog, thunderstorms), the temperature in large type, today's numbers, the next three days and a wind compass. It is part of the Poster suite with [FlightPoster](https://github.com/BartoX360/FlightPoster), [GamePoster](https://github.com/BartoX360/GamePoster), [MoviePoster](https://github.com/BartoX360/MoviePoster), [ShowPoster](https://github.com/BartoX360/ShowPoster) and [BookPoster](https://github.com/BartoX360/BookPoster), and shares their look.
 
 No server to install: the data comes from [Open-Meteo](https://open-meteo.com) (free, no API key, CC BY 4.0).
 
@@ -44,7 +44,7 @@ No server to install: the data comes from [Open-Meteo](https://open-meteo.com) (
 
 The `recipe/src/` folder follows the [trmnlp](https://github.com/usetrmnl/trmnlp) layout.
 
-**LaraPaper / BYOS**: *Plugins → Import recipe*, pick `recipe/weatherposter.zip` (built by `recipe_render.sh`, or zip the contents of `recipe/src/`), then fill in your settings.
+**LaraPaper / BYOS**: *Plugins → Import recipe*, pick `weatherposter-x.y.z.zip` from the [latest release](https://github.com/BartoX360/WeatherPoster/releases/latest) (or zip the contents of `recipe/src/`), then fill in your settings.
 
 ### Settings
 
@@ -60,10 +60,12 @@ The `recipe/src/` folder follows the [trmnlp](https://github.com/usetrmnl/trmnlp
 
 | File | Purpose |
 |---|---|
-| `recipe_render.sh <folder>` | Zips the recipe, imports it into LaraPaper as "WeatherPoster (test)", renders every test case and copies the PNGs into `<folder>` |
-| `recipe_test.php` | The test cases (weather, light, layout, device, language, units) run inside LaraPaper |
-| `update.php` | Copies the code of "WeatherPoster (test)" into the installed plugin, keeping its settings |
-| `install.php` | First install: imports the recipe as "WeatherPoster" with FlightPoster's position |
+| `dev/recipe_render.sh <folder>` | Zips the recipe, imports it into LaraPaper as "WeatherPoster (test)", renders every test case and copies the PNGs into `<folder>` |
+| `dev/recipe_test.php` | The test cases (weather, light, layout, device, language, units) run inside LaraPaper |
+| `dev/update.php` | Copies the code of "WeatherPoster (test)" into the installed plugin, keeping its settings |
+| `dev/install.php` | First install: imports the recipe as "WeatherPoster" with FlightPoster's position |
+
+The scripts target a LaraPaper server running in Docker (container `larapaper-app-1`) over SSH, set with `LARAPAPER_SSH` (e.g. `root@my-server`) in the environment or in `dev/.env` (ignored by git).
 
 ### Notes
 
@@ -76,7 +78,7 @@ The `recipe/src/` folder follows the [trmnlp](https://github.com/usetrmnl/trmnlp
 
 *La météo chez vous, façon affiche.*
 
-Un plugin TRMNL qui affiche la météo du jour comme une affiche : une grande illustration du vrai ciel (soleil, crépuscule ou nuit, nuages, pluie, neige, brouillard, orage), la température en gros, les chiffres du jour, les trois jours suivants et une boussole pour le vent. C'est le compagnon de FlightPoster, dont il reprend le style.
+Un plugin TRMNL qui affiche la météo du jour comme une affiche : une grande illustration du vrai ciel (soleil, crépuscule ou nuit, nuages, pluie, neige, brouillard, orage), la température en gros, les chiffres du jour, les trois jours suivants et une boussole pour le vent. Il fait partie de la suite Poster avec [FlightPoster](https://github.com/BartoX360/FlightPoster), [GamePoster](https://github.com/BartoX360/GamePoster), [MoviePoster](https://github.com/BartoX360/MoviePoster), [ShowPoster](https://github.com/BartoX360/ShowPoster) et [BookPoster](https://github.com/BartoX360/BookPoster), dont il reprend le style.
 
 Aucun serveur à installer : les données viennent d'[Open-Meteo](https://open-meteo.com) (gratuit, sans clé d'API, CC BY 4.0).
 
@@ -108,7 +110,7 @@ Aucun serveur à installer : les données viennent d'[Open-Meteo](https://open-m
 
 Le dossier `recipe/src/` suit la structure de [trmnlp](https://github.com/usetrmnl/trmnlp).
 
-**LaraPaper / BYOS** : *Plugins → Import recipe*, choisissez `recipe/weatherposter.zip` (créé par `recipe_render.sh`, ou zippez le contenu de `recipe/src/`), puis remplissez vos réglages.
+**LaraPaper / BYOS** : *Plugins → Import recipe*, choisissez `weatherposter-x.y.z.zip` dans la [dernière release](https://github.com/BartoX360/WeatherPoster/releases/latest) (ou zippez le contenu de `recipe/src/`), puis remplissez vos réglages.
 
 ### Réglages
 
@@ -124,12 +126,20 @@ Le dossier `recipe/src/` suit la structure de [trmnlp](https://github.com/usetrm
 
 | Fichier | Rôle |
 |---|---|
-| `recipe_render.sh <dossier>` | Zippe la recette, l'importe dans LaraPaper comme « WeatherPoster (test) », rend tous les cas de test et copie les PNG dans `<dossier>` |
-| `recipe_test.php` | Les cas de test (météo, lumière, format, appareil, langue, unités) exécutés dans LaraPaper |
-| `update.php` | Copie le code de « WeatherPoster (test) » dans le plugin installé, sans toucher à ses réglages |
-| `install.php` | Première installation : importe la recette comme « WeatherPoster » avec la position de FlightPoster |
+| `dev/recipe_render.sh <dossier>` | Zippe la recette, l'importe dans LaraPaper comme « WeatherPoster (test) », rend tous les cas de test et copie les PNG dans `<dossier>` |
+| `dev/recipe_test.php` | Les cas de test (météo, lumière, format, appareil, langue, unités) exécutés dans LaraPaper |
+| `dev/update.php` | Copie le code de « WeatherPoster (test) » dans le plugin installé, sans toucher à ses réglages |
+| `dev/install.php` | Première installation : importe la recette comme « WeatherPoster » avec la position de FlightPoster |
+
+Les scripts visent un serveur LaraPaper en Docker (conteneur `larapaper-app-1`) joignable en SSH, désigné par `LARAPAPER_SSH` (ex. `root@mon-serveur`), dans l'environnement ou dans `dev/.env` (ignoré par git).
 
 ### Remarques
 
 - L'écran est construit en JavaScript au moment du rendu : le moteur de rendu doit exécuter JavaScript.
 - Open-Meteo se met à jour toutes les 15 minutes : un intervalle de rafraîchissement de 15 minutes ou plus suffit.
+
+---
+
+## Licence / License
+
+Code sous licence [MIT](LICENSE). Les données affichées appartiennent à leurs sources respectives. / Code released under the [MIT](LICENSE) license. The data shown belongs to its respective sources.

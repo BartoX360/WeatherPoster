@@ -12,7 +12,8 @@ custom_fields:
 - keyname: about
   field_type: author_bio
   name: WeatherPoster
-  description: "The weather at home, drawn as a poster: the real sky (sun, dusk or night, clouds, rain, snow, fog, storms), today's numbers and the next three days. Data: Open-Meteo (CC BY 4.0). / La météo chez vous, façon affiche."
+  description: "The weather at home, drawn as a poster: the real sky (sun, dusk or night, clouds, rain, snow, fog, storms), today's numbers and the next three days. Data: Open-Meteo (CC BY 4.0). / La météo chez vous, façon affiche. v1.0.0"
+  github_url: https://github.com/BartoX360/WeatherPoster
 - keyname: lat
   field_type: string
   name: Latitude
