@@ -37,6 +37,9 @@ No server to install: the data comes from [Open-Meteo](https://open-meteo.com) (
 
 ### Installation
 
+> [!NOTE]
+> This plugin is built and tested on [LaraPaper](https://github.com/usetrmnl/larapaper) only. It should work on usetrmnl.com and other TRMNL servers, but it has not been tested there: feedback is welcome in the issues.
+
 **TRMNL (usetrmnl.com)**: create a *Private Plugin* with the *Polling* strategy, then copy:
 - `polling_url` from `recipe/src/settings.yml` into *Polling URL*;
 - the `custom_fields` from `recipe/src/settings.yml` into *Custom fields* (YAML);
@@ -102,6 +105,9 @@ Aucun serveur à installer : les données viennent d'[Open-Meteo](https://open-m
 | Couleur · averses au crépuscule | TRMNL X · nuit de neige |
 
 ### Installation
+
+> [!NOTE]
+> Ce plugin est développé et testé uniquement sur [LaraPaper](https://github.com/usetrmnl/larapaper). Il devrait fonctionner sur usetrmnl.com et les autres serveurs TRMNL, mais il n'y a pas été testé : les retours sont les bienvenus dans les issues.
 
 **TRMNL (usetrmnl.com)** : créez un *Private Plugin* avec la stratégie *Polling*, puis copiez :
 - `polling_url` de `recipe/src/settings.yml` dans *Polling URL* ;
